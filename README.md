@@ -47,3 +47,17 @@ You can replace the model in this sample with a different TensorFlow model.  The
 
 Rebuild and deploy your solution (⚠ don't forget to increment the version in the `module.json` file) to have solution leverage your own custom model.
 
+## Flow of Execution
+
+![Containers call Containers](Pi-Docker-scott-or-not-container.jpg "Container-to-Container")
+1) The Startup Container repeats the process of 
+   1) Take a picture 
+    1) Calls the Custom Vision Container over HTTP
+1) The Custom Vision Container is responsible for analyzing the image.
+   1) It runs an image recognition model against the passed image. This vision model was created in Azure and built into the Docker image. 
+   1) The Custom Vision Container invokes the Azure Functions container via HTTP.
+1) The Azure Functions Container is responsible for informing display and notification components of the vision analysis results. 
+   1) It posts the information to Twitter using Azure APIs.
+   1) The Azure Functions Container calls the Startup Container , via HTTP, informing it of the results.
+1) The Startup Container displays the match/no-match icon on the Sense Hat LEDs.
+
